@@ -120,7 +120,7 @@ Currently a rework of 802.15.4 subsystem is in progress.
 
 The rework will contains a new netlink API and a general handling about frame creation and parsing.
 
-.Supported 802.15.4 Hardware
+.Work status
 [options="header"]
 |=======================================
 |Milestone        | Description | state

@@ -138,6 +138,8 @@ The rework will contains a new netlink API and a general handling about frame cr
 |3. frame parsing | remove bugs, more generical        | [red]#TODO#
 |=======================================
 
+*NOTE* we need to finish rework state 2. before we can start 3 or anything else which touch the frame parsing/generation.
+
 For the nl802154 framework you will need the wpan-tools, older kernels need lowpan-tools but this is not recommended.
 
 // vim: set syntax=asciidoc:

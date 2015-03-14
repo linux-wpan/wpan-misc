@@ -95,7 +95,7 @@ iwpan dev $IFNAME del
 Finally create a monitor interface:
 
 ---------------------------------------------------------------------
-iwpan phy wpan-phy0 interface add monitor%d type monitor
+iwpan phy phy0 interface add monitor%d type monitor
 ---------------------------------------------------------------------
 
 Then bring this interface up and run wireshark, tcpdump, etc... on it.

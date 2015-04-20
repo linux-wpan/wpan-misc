@@ -1,6 +1,9 @@
 linux-wpan
 ==========
-Mailinglist <linux-wpan@vger.kernel.org>
+Mailinglist
+
+<linux-wpan@vger.kernel.org>
+http://www.spinics.net/lists/linux-wpan[Mailinglist-Archive]
 
 .IRC
 #linux-wpan on irc.freenode.net

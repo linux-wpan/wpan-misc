@@ -134,9 +134,7 @@ Open Tasks
 ** no aret mode for max_frame_retires -1
 ** etc
 * Missing features which wireless has and wpan not. Since we based our implementation on wireless we should sync "good patches" from wireless branch.
-** Something like http://www.spinics.net/lists/netdev/msg321088.html[net: nl80211 - pass name_assign_type to rdev_add_virtual_intf()]
-** trace functionality for rdev/driver_ops http://git.kernel.org/cgit/linux/kernel/git/bluetooth/bluetooth-next.git/tree/net/wireless/rdev-ops.h[rdev-ops.h] and
-http://git.kernel.org/cgit/linux/kernel/git/bluetooth/bluetooth-next.git/tree/net/mac80211/driver-ops.h[driver-ops.h]
+** trace functionality for driver_ops http://git.kernel.org/cgit/linux/kernel/git/bluetooth/bluetooth-next.git/tree/net/mac80211/driver-ops.h[driver-ops.h]
 ** Whatever you want and find
 * rework
 ** missing features in nl802154, crypto etc.

@@ -11,7 +11,8 @@ http://www.spinics.net/lists/linux-wpan[Mailinglist-Archive]
 wpan-tools
 ----------
 
-To access the nl802154 netlink inteface you will need the wpan-tools.
+To access the nl802154 netlink inteface and also for checking
+the network connectivity you will need the wpan-tools.
 
 Dependencies:
 
@@ -21,6 +22,7 @@ These tools contains:
 
 [horizontal]
 *iwpan*:: based on the wireless http://wireless.kernel.org/en/users/Documentation/iw[iw] tool.
+*wpan-ping*:: Ping utility on IEEE 802.15.4 level.
 
 Download
 ~~~~~~~~

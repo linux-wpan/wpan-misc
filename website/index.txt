@@ -206,4 +206,6 @@ Specifications
 ** http://datatracker.ietf.org/wg/6lo/documents/[IPv6 over Networks of Resource-constrained Nodes (6lo)]
 ** http://datatracker.ietf.org/wg/core/documents/[Constrained RESTful Environments (core)]
 
+* https://www.iana.org/assignments/_6lowpan-parameters/_6lowpan-parameters.xhtml[6LoWPAN IANA assignments]
+
 // vim: set syntax=asciidoc:

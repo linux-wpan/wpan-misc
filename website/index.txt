@@ -37,6 +37,7 @@ Supported Hardware
 [cols="3,4,2,^2,12",options="header"]
 |=============================================================
 |Transceiver |Supported        |Driver     | Bus |Where to buy
+|adf7242     |yes | adf7242 | SPI or PMOD | http://www.analog.com/en/products/rf-microwave/integrated-transceivers-transmitters-receivers/low-power-rf-transceivers/adf7242.html#product-samplebuy[Analog]
 |at86rf212   |yes              |at86rf230  | SPI | http://de.aliexpress.com/item/Wireless-transceiver-module-zigbee-module-belt-at86rf212-mcu-chip-780m-module/1757611944.html[aliexpress]
 |at86rf212b  |yes              |at86rf230  | SPI | http://www.digikey.com/product-search/en?x=0&y=0&lang=en&site=us&keywords=ATZB-212B-XPRO[digikey]
 |at86rf230   |no               |at86rf230? | SPI |

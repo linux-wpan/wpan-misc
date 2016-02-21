@@ -209,4 +209,22 @@ Specifications
 
 * https://www.iana.org/assignments/_6lowpan-parameters/_6lowpan-parameters.xhtml[6LoWPAN IANA assignments]
 
+Changing the Website
+~~~~~~~~~~~~~~~~~~~~
+
+If you want to take part in developing this website, do the following:
+
+---------------------------------------------------------------------
+hub clone https://github.com/linux-wpan/wpan-misc.git
+cd wpan-misc/website
+hub checkout -b myproposal
+hub commit -m "my proposal for the website"
+hub fork
+hub hub push $githubuser myproposal
+hub pull-request
+---------------------------------------------------------------------
+
+The hub command can be found at: https://hub.github.io or in your favourite
+package manager.
+
 // vim: set syntax=asciidoc:

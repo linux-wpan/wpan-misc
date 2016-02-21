@@ -85,6 +85,47 @@ Note: we don't support any case of short-addresses right now. This is a complica
 Of course we supporting broadcast frames via short-addresses but nothing more in 802.15.4 6LoWPAN.
 Only extended address handling is supported right now.
 
+
+Setup a 6LowPAN test network
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Let's assume you want to setup a 6lowpan test network of six nodes.
+
+---------------------------------------------------------------------
+# we need some Private Area Network ID
+panid="0xbeef"
+# number of nodes
+numnodes=6
+
+# include the kernel module for a fake node, tell it to create six
+# nodes
+modprobe fakelb numlbs=$numnodes
+
+# initialize all the nodes
+for i in $(seq 0 $numnodes);
+do
+	iwpan dev wpan${i} set pan_id 0xbeef
+	ip link wpan${i} name lowpan${i} type lowpan
+	ip link set wpan${i} up
+	ip link set lowpan${i} up
+done
+---------------------------------------------------------------------
+
+Now let us send some data over our network:
+
+---------------------------------------------------------------------
+wireshark -kSl -i lowpan0 &
+# get the IPv6 address of lowpan1
+lowpan1addr="$(ip addr show lowpan1 | grep inet6 \
+	| sed 's,.*inet6 \([^/]*\).*,\1,')"
+# tell ping6 to ping the IPv6 address of lowpan1 and send it via
+# lowpan0
+ping6 ${lowpan1addr}%lowpan0
+---------------------------------------------------------------------
+
+Now watch wireshark and all the nice ICMP packets there.
+
+
 Sniffing
 ~~~~~~~~
 

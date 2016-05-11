@@ -90,8 +90,13 @@ Setup a 6LowPAN test network
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Let's assume you want to setup a 6lowpan test network of six nodes.
+Each of them will be created in their own net namespace to avoid
+local IPv6 optimizations. Each netns is named according to the wpan
+interface which available in the net namespace.
 
 ---------------------------------------------------------------------
+#!/bin/sh
+
 # we need some Private Area Network ID
 panid="0xbeef"
 # number of nodes
@@ -102,25 +107,26 @@ numnodes=6
 modprobe fakelb numlbs=$numnodes
 
 # initialize all the nodes
-for i in $(seq 0 $numnodes);
+for i in $(seq 0 `expr $numnodes - 1`);
 do
-	iwpan dev wpan${i} set pan_id 0xbeef
-	ip link wpan${i} name lowpan${i} type lowpan
-	ip link set wpan${i} up
-	ip link set lowpan${i} up
+	ip netns delete wpan${i}
+	ip netns add wpan${i}
+	PHYNUM=`iwpan dev | grep -B 1 wpan${i} | sed -ne '1 s/phy#\([0-9]\)/\1/p'`
+	iwpan phy${PHYNUM} set netns name wpan${i}
+
+	ip netns exec wpan${i} iwpan dev wpan${i} set pan_id $panid
+	ip netns exec wpan${i} ip link add link wpan${i} name lowpan${i} type lowpan
+	ip netns exec wpan${i} ip link set wpan${i} up
+	ip netns exec wpan${i} ip link set lowpan${i} up
 done
 ---------------------------------------------------------------------
 
 Now let us send some data over our network:
 
 ---------------------------------------------------------------------
-wireshark -kSl -i lowpan0 &
-# get the IPv6 address of lowpan1
-lowpan1addr="$(ip addr show lowpan1 | grep inet6 \
-	| sed 's,.*inet6 \([^/]*\).*,\1,')"
-# tell ping6 to ping the IPv6 address of lowpan1 and send it via
-# lowpan0
-ping6 ${lowpan1addr}%lowpan0
+ip netns exec wpan0 wireshark -kSl -i lowpan0 &
+# ping all nodes
+ip netns exec wpan0 ping6 ff02::1%lowpan0
 ---------------------------------------------------------------------
 
 Now watch wireshark and all the nice ICMP packets there.

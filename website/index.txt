@@ -272,7 +272,7 @@ cd wpan-misc/website
 git checkout -b myproposal
 # Change this page to whatever you like.
 $EDITOR index.txt
-git commit -a
+git commit -s -a
 # be sure to be registered to linux-wpan@vger.kernel.org before sending the
 # patch
 git send-email --to linux-wpan@vger.kernel.org -1

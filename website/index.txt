@@ -52,6 +52,14 @@ Supported Hardware
 |Xbee        |no |https://github.com/joaopedrotaveira/linux-rpl/blob/master/mainline-3.12.y/0001-Added-XBee-driver-support.patch[out of tree]| ?? | https://www.sparkfun.com/pages/xbee_guide[sparkfun]
 |=============================================================
 
+.Boards with Transceivers
+[options="header"]
+|=============================================================
+|Name        | Transceiver |Website
+|Ci40        | ca8210      |https://www.kickstarter.com/projects/imgtec/creator-ci40-the-ultimate-iot-in-a-box-dev-kit[kickstarter]
+|blixten     | cc2520      |https://jopee.wordpress.com/6lowpan-gateway/[jopee]
+|=============================================================
+
 How-To's
 --------
 

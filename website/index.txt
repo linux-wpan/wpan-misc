@@ -81,7 +81,7 @@ ip link add link wpan0 name lowpan0 type lowpan
 That's it! Now you have some lowpan0 interface with a 6LoWPAN 1280 MTU which runs on top the wpan interface.
 As default you have a default link-local address based on the MAC (extended address).
 
-Setup a 6LowPAN test network
+Setup a 6LoWPAN test network
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Let's assume you want to setup a 6lowpan test network of six nodes.

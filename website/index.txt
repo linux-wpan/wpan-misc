@@ -81,11 +81,6 @@ ip link add link wpan0 name lowpan0 type lowpan
 That's it! Now you have some lowpan0 interface with a 6LoWPAN 1280 MTU which runs on top the wpan interface.
 As default you have a default link-local address based on the MAC (extended address).
 
-Note: we don't support any case of short-addresses right now. This is a complicated issue with the IPv6 neighbour discovery cache.
-Of course we supporting broadcast frames via short-addresses but nothing more in 802.15.4 6LoWPAN.
-Only extended address handling is supported right now.
-
-
 Setup a 6LowPAN test network
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

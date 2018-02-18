@@ -135,6 +135,21 @@ ip netns exec wpan0 ping6 ff02::1%lowpan0
 Now watch wireshark and all the nice ICMP packets there.
 
 
+Troubleshooting
+~~~~~~~~~~~~~~~
+If you have issues with transceiver connected to SPI bus, check first
+if wiring is correct and SPI controller is properly configured. Try to
+decrease SPI clock frequency. Messages like these ones in dmesg output
+could indicate problems with SPI connection:
+
+---------------------------------------------------------------------
+at86rf230 spi32765.0: unexcept state change from 0x01 to 0x08. Actual state:
+0x01
+WARNING: CPU: 0 PID: 61 at drivers/net/ieee802154/at86rf230.c:696 0xc0442644
+received tx trac status 4
+---------------------------------------------------------------------
+
+
 Sniffing
 ~~~~~~~~
 

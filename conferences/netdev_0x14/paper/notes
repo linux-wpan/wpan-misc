@@ -1,1 +1,4 @@
 - difference about mcr approach routes via loopback and over interface
+- may add sysfs entry for different default routes handling?
+- traceroute6 of iputils has a bug in nexthdr chain
+- FUTURE WORK: IPIP handling (draft useofrplinfo)? RPI Header Hop-By-Hop Option. (Refer Patch which doesn't drop HBH as max number)

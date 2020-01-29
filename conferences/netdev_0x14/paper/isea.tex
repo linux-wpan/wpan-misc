@@ -26,14 +26,18 @@ Contact Emails\\
 \begin{document} 
 \maketitle
 \begin{abstract}
-The Proceedings of the International Symposium on Electronic
-Art will be compiled from electronic manuscripts submitted by
-the authors. This paper provides brief style instructions that will
-facilitate high-quality, consistent, proceedings. The title
-``Abstract'' should be 10 point, bold type, centered at the
-beginning of the left column. The body of the abstract
-summarizing the thesis and conclusion of the paper in no more
-than 200 words should be 9 point, justified, regular type.
+RPL \cite{rfc6550} is an IPv6 routing protocol for Low-Power and Lossy networks and becomes interested to use inside the IoT world.
+
+There exists a lot of different open source Linux RPL implementations out there which are using RPL with storing mode only.
+Storing mode means that the routes are propagated via ICMPv6 RPL messages and stored inside the routing table of the Linux kernel.
+
+A new thing which was never possible before without a hackish way is to handle non-storing mode.
+Non-storing mode is using source routing by adding header information \cite{rfc6554} instead storing routes inside the routing table.
+
+This talk is about to show an approach how to implement RPL source routing for the kernel and offer the necessary configuration interface to the user space.
+As implementation we will use rpld \cite{rpld} to show an example RPL implementation which will take use of such configuration interface to support non-storing mode.
+As reference we will lookup the Linux segment routing implementation and try to extend the existing code with the needs of RPL non-storing mode.
+This paper shows the approach to implemen RPL source routing header as it was discussed at Netdevconf 2.1.
 \end{abstract}
 
 \section{Keywords}

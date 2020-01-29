@@ -3,3 +3,4 @@
 - traceroute6 of iputils has a bug in nexthdr chain
 - segment routing performance better because compress/uncompress realloc()/memmove() of socket buffer
 - FUTURE WORK: IPIP handling (draft useofrplinfo)? RPI Header Hop-By-Hop Option. (Refer Patch which doesn't drop HBH as max number)
+- FUTURE WORK: test against other implementations? Contiki as user space application connected to mac802154_hwsim.

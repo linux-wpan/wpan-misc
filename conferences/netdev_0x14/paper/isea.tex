@@ -25,7 +25,7 @@ alex.aring@gmail.com, stefan@datenfreihafen.org, mcr@sandelman.ca\\
 }
 \setcounter{secnumdepth}{0}
 
-\begin{document} 
+\begin{document}
 \maketitle
 \begin{abstract}
 RPL \cite{RFC6550} is an IPv6 routing protocol for Low-Power and Lossy networks and becomes interested to use inside the IoT world.
@@ -129,7 +129,7 @@ We will use this example topology to show a resulting RPL topology in ``storing-
 	\label{mesh1}
 \end{figure}
 
-Figure \ref{mesh1} shows a possible resulting RPL DODAG of the mesh topology as shown in figure \ref{mesh0}. 
+Figure \ref{mesh1} shows a possible resulting RPL DODAG of the mesh topology as shown in figure \ref{mesh0}.
 Upward routes are shown as red directional arrows to reach the root node which was set by parent selection.
 The root node stores a configuration to setup downward routes shown as green arrows.
 These downward routes will be added as source routing header to the IPv6 header.
@@ -143,7 +143,7 @@ At state of this document current RPL implementations for Linux like rpld or uns
 The reason why nobody implement non-storing mode so far is that there exists unsolved issues.
 This section describes the problem in Linux which need to be solved to provide non-storing mode.
 Afterwards multiple possible solution will be listed.
-At the end a decision is made which will be the approach to provide non-storing mode under Linux. 
+At the end a decision is made which will be the approach to provide non-storing mode under Linux.
 
 \subsection{Problem}
 
@@ -161,7 +161,7 @@ This is necessary when a IPv6 packet from the childs arrived over it's parent pa
 If a root wants to send a packet to a known child the RPL source route header need to be attached with the right path information to it's child as well.
 
 {\bf Each node} need to handle the RPL source routing header by parsing the header and handle forwarding of this packet to the nexthop correctly as RFC6554 describes.
-This need to be done in the Linux IPv6 forwarding plane and not after 
+This need to be done in the Linux IPv6 forwarding plane and not after.
 
 \subsection{Socket Option}
 
@@ -354,7 +354,7 @@ At the end we had several IPv6 capable interfaces separated in their net namespa
 \subsection{wireshark}
 
 Wireshark \cite{wireshark} was used to capture traffic on the IPv6 interface to confirm the RPL source router header was inserted.
-At writing of this paper Wireshark was capable to dissect the RPL source routing header so it was easy to verify the compression algorithm to work correctly regarding to the Wireshark implementation. 
+At writing of this paper Wireshark was capable to dissect the RPL source routing header so it was easy to verify the compression algorithm to work correctly regarding to the Wireshark implementation.
 
 \subsection{iputils}
 

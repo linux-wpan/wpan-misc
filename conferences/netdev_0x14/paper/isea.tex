@@ -133,7 +133,7 @@ Figure \ref{mesh1} shows a possible resulting RPL DODAG of the mesh topology as 
 Upward routes are shown as red directional arrows to reach the root node which was set by parent selection.
 The root node stores a configuration to setup downward routes shown as green arrows.
 These downward routes will be added as source routing header to the IPv6 header.
-The children of the RPL network will actually not store any downard routes information and get the forwarding information from the routing header.
+The children of the RPL network will actually not store any downward routes information and get the forwarding information from the routing header.
 These forwarding information are shown beside the green arrows with node number and a separation character.
 For example the root node can reach the child node 6 via node 2 over 5 to 6.
 
@@ -177,7 +177,7 @@ This option likely made for doing experimental source routing header configurati
 
 A lightweight tunnel (lwtunnel) in Linux can be used to meet the requirement of generating RPL source route header for a specific destination.
 Therefore we can lookup the implementation of IPv6 segment routing \cite{srh} of the Linux kernel implementation.
-Leightweight tunnels can be registered over a ops structure inside the Linux kernel.
+Lightweight tunnels can be registered over a ops structure inside the Linux kernel.
 Per route destination, which is in RPL only a full IPv6 address and not a prefix route, a encapsulation type can be given to assign the route to a specific lwtunnel.
 Incoming and internal packets for a specific destination lwtunnel will be encapsulated by a RPL source routing header with a specific configuration given by the lwtunnel at creation time.
 
@@ -285,7 +285,7 @@ The API of the helper functionality is the following:
 There are two size calculation functionality, ``ipv6\_rpl\_srh\_alloc\_size()`` should be used to get allocation size to decompress the RPL header.
 This function will allocate worst case memory size for segments area according to n segments.
 On the other hand ``ipv6\_rpl\_srh\_size()`` will return the size of a compressed header according to the number of n segments and RPL specific parameters ``cmpri`` and ``cmpre``.
-This function can be used to validate the a RPL header before dereferencing it to buffer overflows.
+This function can be used to validate a RPL header before dereferencing it to buffer overflows.
 
 The necessary parameters used in the helpers are described as following:
 
@@ -313,7 +313,7 @@ To reach that another function ``int ipv6\_chk\_rpl\_srh\_loop(struct net *net, 
 This helper functionality returns one if any address occurs separated inside the segmented array, otherwise it will return zero.
 The packet will dropped and a special ICMPv6 error messages will be generated as RFC 6554 descibes.
 
-\paragraph{Leightweight Tunnel}
+\paragraph{Lightweight Tunnel}
 
 To generate IPv6 packets with a RPL source routing header in Linux a lightweight tunnel implementation was introduced.
 This feature can be disabled or enabled during compile time with the ``IPV6\_RPL\_LWTUNNEL`` config entry.
@@ -395,7 +395,7 @@ This section describes bugs which we detected while implementing and using the s
 
 To implement a lwtunnel we figured out that in ``struct lwtunnel\_state`` has a field named ``headroom`` which was set inside the IPv6 segment routing implementation.
 As we adapted the code base from the IPv6 segment routing implementation as well, we figured out that setting this value with an IPv6 minimum MTU size interface makes problems.
-After doing research and finding out that this field was introduced by the MPLS leightweight tunnel which operates before the IP layer.
+After doing research and finding out that this field was introduced by the MPLS lightweight tunnel which operates before the IP layer.
 As the Linux interface MTU is layer 3, this headroom value specifies the additional amount which is required before IPv6 such as MPLS.
 In out environment on an IPv6 minimum MTU interface the IPv6 segment routing ``sendmsg()`` call will return in an error.
 There is still a discussion going on what the ``headroom`` value really means. As it breaks 6LoWPAN interface for the RPL lwtunnel implementation it is set to zero.

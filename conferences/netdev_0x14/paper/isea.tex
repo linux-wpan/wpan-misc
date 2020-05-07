@@ -49,24 +49,25 @@ Linux, IPv6, Low-Power and Lossy Networks, LLN, IPv6 Routing Protocol for Low-Po
 \section{Introduction}
 
 With storing and non-storing RPL offer two different operations modes.
-As this is the main concern about the paper, this section will at first explain the differences between these modes.
-At first we describe how RPL generates routes based on an example mesh topology.
-Because RPL generates a tree like routing graph there exists upward routes as a route to the root node and downward routes as a route to child nodes.
+Before we can go into the details of the implementation in this paper, this section will explain the differences between these modes.
+We will describe how RPL generates routes based on an example mesh topology.
+As RPL generates a tree like routing graph there exists upward routes as a route to the root node and downward routes as a route to child nodes.
 
 \subsection{Topology}
 
 In this paper we simplify RPL routing graph as a tree like structure with one parent and a list of children named DODAG (Destination-Oriented Directed Acyclic Graph).
-Out of scope are other topologies like having multiple roots or floating roots, where the root node can be changed during runtime.
+Out of scope are other topologies e.g. multiple roots or floating roots, where the root node can be changed during runtime.
 We want to keep the topology simple enough to first tackle the issue of non-storing mode inside GNU/Linux environment.
 
-RPL avoids to use the IPv6 neighbor discovery all nexthop destination will use link-local addresses which are setup by stateless autoconfiguration.
+RPL avoids to use the IPv6 neighbor discovery. All nexthop destination will use link-local addresses which are setup by stateless autoconfiguration.
 In order to get basic RPL configuration the network is flooded with a DIO (DODAG Information Object) message.
 
 \subsection{Upward Routes}
 
 Each node, except the root node (DODAG root), maintains upward routes.
 In both operation modes the upwards routes are stored inside the routing table.
-This nexthop address is declared as parent (DODAG parent), because in view of the actual node the root can be reached over the parent, then the next parent, and so on...
+This nexthop address is declared as parent (DODAG parent), because in view of
+the actual node the root can be reached over its parent and traversing the tree further up.
 All unknown destination addresses will be routed to the parent which finally reach the root node.
 The root can act then as a RPL Border Routing and route packets to a different IPv6 network.
 
@@ -74,33 +75,33 @@ The root can act then as a RPL Border Routing and route packets to a different I
 
 In case of multiple possible parents RPL provide mechanism for parent selection.
 One which considered all parent selection up to the root node is MRHOF \cite{RFC6719}.
-MRHOF consider the link quality between the node and their parents.
+MRHOF considers the link quality between the node and their parents.
 However this is out of scope of this document as basic parent selection can be considered a first come, first serve strategy when a DIO message arrived.
 
 \subsection{Downward Routes}
 
 In downward routes the operation mode can be different.
-The downward routes are there to reach child nodes until leaf nodes from any parent or the root.
+Downward routes are neededto reach child nodes until leaf nodes from any parent or the root.
 As mentioned earlier the operation mode can be storing or non-storing mode.
 In this section we describe the difference of both operation modes.
 
 \paragraph{Storing Mode}
 
 In storing mode the downward routes are stored in {\bf all} nodes inside the routing table in their IPv6 stack instance like the upward routes.
-Each nodes reports to his parent, decided before over parent selection, his reachable nodes over his children.
-Therefore a DAO (Destination Advertisement Object) message will be send to his parent which contains all child nodes.
-For that reason a DAO contains multiple RPL Target Options which contains each global-link address reached by specific link-local child address.
-Started from the leaf each node will report it's parent their children and add their own address.
+Each nodes reports to his parent, decided before during parent selection, his reachable nodes over his children.
+Therefore a DAO (Destination Advertisement Object) message will be send to the parent which contains all child nodes.
+For this very reason a DAO contains multiple RPL Target Options which contains each global-link address reached by specific link-local child address.
+Starting from the leaf, each node will report it's parent their children and add their own address.
 
-As result each nodes maintains a routing table in their IPv6 stack instance how every child in view of a specific node can be reached.
-If the destination address isn't specified in the routing table the default route will route the packet to the root node.
+As result each nodes maintains a routing table in its IPv6 stack instance how every child in view of a specific node can be reached.
+If the destination address isn't specified in the routing table, the default route will route the packet to the root node.
 No source routing is involved, the forwarding inside this RPL operation mode is handled by looking up the forwarding table only.
 
 \paragraph{Non-Storing Mode}
 
 In non-storing mode the nodes doesn't store any forwarding table information except one route for upward routes.
-This effects that all packets will be routed to the root node of the network.
-The root node will take use of source routing and adds, in any case that the destination address is part of the RPL network, a RPL source routing header as IPv6 extension header.
+This has the effect that all packets will be routed to the root node of the network.
+The root node will take use of source routing and adds, if the destination address is part of the RPL network, a RPL source routing header as IPv6 extension header.
 This source routing header has every nexthop to reach the final destination node inside the RPL network.
 A RPL node sends for this case the DAO message not to it's parent, it will be directly routed to the root node.
 Such DAO message will contain two options, the node node global-link address and it's parent link-local address.
@@ -108,7 +109,7 @@ The root node has a full topology overview of the RPL network and can reconstruc
 
 \section{Example}
 
-This section describes a example topology to show the information described in the previous sections.
+This section describes an example topology to show the information described in the previous sections.
 
 \subsection{Topology}
 

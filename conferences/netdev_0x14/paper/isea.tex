@@ -216,23 +216,25 @@ The conclusion is to provide an in kernel lwtunnel implementation and extend the
 
 This section describes the design for the upcoming implementation part.
 It contains the explanation of the user view how to use the RPL source routing functionality.
-This contains Sysfs and Netlink handling.
-As side note the compression functionality of the RPL source routing handling will be described.
+This contains handling of the sysfs and netlink interfaces and also has a side
+note on the compression functionality of the RPL source routing.
 
 \subsection{Sysfs}
 
-As the segment routing implementation by default the processing of RPL source routing headers is disabled.
-The interface IPv6 Sysfs configuration will be extended to allow the processing of such headers.
+The segment routing implementation for processing of RPL source routing headers
+will be disabled by default. The sysfs interface for IPv6 configuration will be
+extended to allow enabling the processing of these headers.
 
 \subsection{Compression}
 
 The RPL source routing header of RFC6554 can be in a compressed format.
 According to the IPv6 destination address the same prefix bytes can be elided.
-A compression implementation follows a simple design of providing compress and uncompress functionality.
+The compression implementation follows a simple design of providing compress and uncompress functionality.
 Any provided format can be converted into a different format according to the destination address context information.
 
-In some cases it's necessary to change source routing header information which may available in a compressed format.
-To avoid mistakes in the implementation the common approach to handle such changes as following process:
+In some cases it's necessary to change source routing header information which
+may available in a compressed format only. To avoid mistakes in the
+implementation the common approach is to handle such changes as following:
 
 \begin{enumerate}
 \item{Uncompress RPL source routing header}
@@ -244,29 +246,34 @@ This provides a simple modification of the segment addresses as these are availa
 
 \subsection{Linux Kernel Netlink}
 
-The Netlink API should be very simple as the existing segment routing implementation.
-Segment routing is made in such way to provide the source routing header as binary data according to an IPv6 routing prefix.
-The RPL source routing Netlink API should offer the same way as segment routing is doing.
+The Netlink API for the RPL source routing should align itself with the same API
+principles of the existing segment routing implementation.
+The segment routing API is designed to provide the source routing header as binary data according to an IPv6 routing prefix.
 For simplification of API the routing header will be accepted only in a uncompressed format.
-This can also only be handled in an uncompressed format because if the routing prefix is giving as non full address the final destination address is available at runtime only.
-One exception is if the routing prefix is a full IPv6 address prefix, which can avoid a compression during runtime.
+This simplification has the benefit of avoided cases where the routing prefix is
+giving as non full address and the final destination address is available at runtime only.
+We have one exception, if the routing prefix is a full IPv6 address prefix, which can avoid a compression during runtime.
 
 \subsection{rpld}
 
 The RPL daemon exchange ICMPv6 messages to setup necessary routing information.
-As state of writing this paper the RPL daemon already supports storing mode functionality.
+At the state of writing this paper the RPL daemon already supports storing mode
+by using this functionality.
 When the rpld daemon is starting it will setup the necessary sysfs entry settings to allow the forwarding of RPL source routing headers.
 The RPL daemon will be extended to support non-storing mode by introducing a new configuration option named ``mode-of-operation``.
 RFC 6550 describes ``mode-of-operation`` as a byte parameter for broadcasting routing protocol parameters through the network.
-The root node of the RPL will initial flooding the network with these parameters inclusive the global-link IPv6 address.
-When other nodes receiving these parameters they doing their upward routes by doing parent selection.
-Over upward routes the nodes sending their parent and own global-link address to the root node of the RPL network.
-The RPL root node constructs the RPL topology and setups the downward routes to each node by using the RPL source routing Netlink API.
+The root node of the RPL will initial flooding the network with these
+parameters, inclusive the global-link IPv6 address.
+When other nodes receiving these parameters they will be preparing their upward
+routes by executing parent selection.
+Over the upward routes the nodes will send their parent and own global-link
+addresses to the root node of the RPL network.
+The RPL root node constructs the RPL topology and configures the downward routes to each node by using the RPL source routing Netlink API.
 
 \subsection{iproute2}
 
-The iproute2 design follows all other lightweight tunnel mechanism.
-This functionality is not necessary for making the rpld daemon work, but it is a different configuration tool to show or manipulate the current RPL source routing settings.
+The iproute2 design follows all other lightweight tunnel mechanisms.
+This functionality is not necessary for the rpld daemon to work, but it is a different configuration tool to show or manipulate the current RPL source routing settings.
 
 \section{Implementation}
 

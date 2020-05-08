@@ -368,11 +368,12 @@ With such a mechanism every node reports to the root node their parent and own a
 
 \section{Testing}
 
-This section describes how we tested the implementation and confirmed that it's actual working.
+In this section we describe how we tested the implementation and confirmed that it's actual working.
 
 \subsection{mac802154\_hwsim}
 
-For our testing we used mac802154\_hwsim driver and constructed a mesh topology.
+For our testing we used mac802154\_hwsim driver to create virtual IEEE 802.15.4
+devices in Linux and constructed a mesh topology.
 At the end we had several IPv6 capable interfaces separated in their net namespace in a specific topology.
 
 \subsection{wireshark}

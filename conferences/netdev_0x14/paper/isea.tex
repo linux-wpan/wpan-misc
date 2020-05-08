@@ -277,31 +277,36 @@ This functionality is not necessary for the rpld daemon to work, but it is a dif
 
 \section{Implementation}
 
-This section describes the implementation part of the design. It contains the necessary changes inside the Linux kernel or user space software which was needed to implement RPL in ``non-storing`` mode.
+This section describes the implementation of our design. It contains the
+necessary changes inside the Linux kernel and user space software which where needed to implement RPL in ``non-storing`` mode.
 
 \subsection{Linux kernel}
 
-The Linux kernel will be extended to forwarding and generating RPL source routing header to an Linux IPv6 stack generated IPv6 packet.
+The Linux kernel will be extended to forward and generate RPL source routing
+headers to an Linux IPv6 stack generated IPv6 packet.
 
 \paragraph{Compression Helpers}
 
 To provide RPL compression and decompression functionality the file ``net/ipv6/rpl.c`` was introduced.
-This will be always build with the Linux IPv6 Stack implementation because of the possibility to might handle RPL source routing headers during runtime.
+This will be always build with the Linux IPv6 stack implementation to allow
+handling RPL source routing headers during runtime.
 This is part of the forwarding handling.
 
-The API of the helper functionality is the following:
+The API of the helper functionality is defined as follows:
 
 \begin{itemize}
 	\item{size\_t ipv6\_rpl\_srh\_alloc\_size(unsigned char n)}
-	\item{ipv6\_rpl\_srh\_size(unsigned char n, unsigned char cmpri, unsigned char cmpre)}
+	\item{size\_t ipv6\_rpl\_srh\_size(unsigned char n, unsigned char cmpri, unsigned char cmpre)}
 	\item{void ipv6\_rpl\_srh\_decompress(struct ipv6\_rpl\_sr\_hdr *outhdr, const struct ipv6\_rpl\_sr\_hdr *inhdr, const struct in6\_addr *daddr, unsigned char n)}
 	\item{void ipv6\_rpl\_srh\_compress(struct ipv6\_rpl\_sr\_hdr *outhdr, const struct ipv6\_rpl\_sr\_hdr *inhdr, const struct in6\_addr *daddr, unsigned char n)}
 \end{itemize}
 
-There are two size calculation functionality, ``ipv6\_rpl\_srh\_alloc\_size()`` should be used to get allocation size to decompress the RPL header.
+There are two size calculation methods, ``ipv6\_rpl\_srh\_alloc\_size()`` should
+be used to get the allocation size to decompress the RPL header.
 This function will allocate worst case memory size for segments area according to n segments.
 On the other hand ``ipv6\_rpl\_srh\_size()`` will return the size of a compressed header according to the number of n segments and RPL specific parameters ``cmpri`` and ``cmpre``.
-This function can be used to validate a RPL header before dereferencing it to buffer overflows.
+This function can be used to validate a RPL header before dereferencing it to
+potential buffer overflows.
 
 The necessary parameters used in the helpers are described as following:
 
@@ -315,17 +320,19 @@ The necessary parameters used in the helpers are described as following:
 
 \paragraph{Forwarding}
 
-The forwarding implementation will be inserted regarding to the Linux kernel file ``net/ipv6/exthdrs.c`` which is always build.
-As base implementation the most code was took over from the IPv6 segment routing implementation.
+The forwarding implementation is in the Linux kernel file
+``net/ipv6/exthdrs.c``, which is always build.
+As base implementation, most code was re-used from the IPv6 segment routing implementation.
 RPL source routing processing mechanism requires additionally handling at some points.
 
-As segment routing the IPv6 destination address need to be swapped with the segment address one, pointed out by the ``segment\_left`` field of the RPL source routing header.
-To do this manipulation we do a decompression, manipulation and compression handling.
-As the header size can result in a different size before than afterwards a full skb\_pull() of the extension header is necessary.
+Similar to segment routing the IPv6 destination address need to be swapped with the segment address one, pointed out by the ``segment\_left`` field of the RPL source routing header.
+To do this manipulation we do a three step decompression, manipulation and
+compression  procedure.
+As the header size can result in different sizes before and afterwards, a full skb\_pull() of the extension header is necessary.
 
-Another requirement is to detect for possible loops in the address segments.
-It need to be checked that non assigned IPv6 address on the forwarding route appears separate inside the segments array.
-To reach that another function ``int ipv6\_chk\_rpl\_srh\_loop(struct net *net, const struct in6\_addr *segs, unsigned char nsegs)`` was introduced inside ``net/ipv6/addrconf.c``.
+Another requirement is to detect possible loops in the address segments.
+It needs to be checked that a non assigned IPv6 address on the forwarding route appears separate inside the segments array.
+The implementation of this functionality can be found as ``int ipv6\_chk\_rpl\_srh\_loop(struct net *net, const struct in6\_addr *segs, unsigned char nsegs)`` inside ``net/ipv6/addrconf.c``.
 This helper functionality returns one if any address occurs separated inside the segmented array, otherwise it will return zero.
 The packet will dropped and a special ICMPv6 error messages will be generated as RFC 6554 descibes.
 
@@ -335,16 +342,17 @@ To generate IPv6 packets with a RPL source routing header in Linux a lightweight
 This feature can be disabled or enabled during compile time with the ``IPV6\_RPL\_LWTUNNEL`` config entry.
 The implementation of this functionality can be found in ``net/ipv6/rpl\_iptunnel.c``.
 
-The initial code handles only inline extension header and not IP encapsulation.
+The initial code handles only inline extension header and no IP encapsulation.
 Although IP encapsulation is handled in the forwarding code the current RPL lwtunnel implementation doesn't support to generate such packets.
-The reason is that it is not yet clear in which cases and which other requirements are needed when a IP encapsulation is required.
-Currently the ROLL working group tries to summary these requirements in a different draft \cite{I-D.ietf-roll-useofrplinfo}.
+Currently the ROLL working group tries to summary the requirements for IP
+encapsulation in a different draft \cite{I-D.ietf-roll-useofrplinfo}.
 
 \subsection{iproute2}
 
-The iproute2 implementation contains two basic functionality to create a routing configuration for adding a RPL source routing header for a specific IPv6 destination address.
-Therefore the specific segments are need to given from the command line.
-As well the current configuration can be dumped via iproute2.
+The iproute2 implementation contains two basic methods to create a routing
+configuration to add a RPL source routing header for a specific IPv6 destination address.
+Therefore the specific segments are needed to be given on the command line.
+Additionally the current configuration can be dumped via iproute2.
 The parsing and printing from and to command line can be shared between IPv6 segment routing and RPL segment routing code.
 As indicator to specify a RPL source routing lwtunnel configuration the keyword ``rpl`` will be used.
 
@@ -352,10 +360,10 @@ Example: ``ip -n ns0 -6 route add 2001::3 encap rpl segs fe80::c8fe:beef:cafe:ca
 
 \subsection{rpld}
 
-To implement ``non-storing`` mode a tree data structure to represent the current RPL topology inside the root node is required.
-A basic implementation with key value of the global-link address and their link-local address was added to the rpld implementation.
+To implement ``non-storing`` mode a tree data structure is required to represent the current RPL topology inside the root node.
+A basic implementation with key value pairs of the global-link address and their link-local address was added to the rpld implementation.
 If a DAO messages arrived the source global-link address will be used to store the node into the tree according to it's parent from the parent selection algorithm.
-Storing a node inside the topology will occur that a Netlink message is send to the kernel to setup a RPL source route.
+Storing a node inside the topology will lead ta a Netlink message being send to the kernel to setup a RPL source route.
 With such a mechanism every node reports to the root node their parent and own address, the root node can calculate the path from the root to it's child and construct the necessary segments setup from the taken path.
 
 \section{Testing}

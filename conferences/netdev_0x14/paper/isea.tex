@@ -389,26 +389,30 @@ Traceroute was showing the upward and downward routes correctly, that the traffi
 \section{Future Work}
 
 This paper shows how the basic RPL segment routing is implemented for the Linux kernel.
-However there exists something to do which are to support new features or performance tweaks.
+There remains future work to optimize the performance and adding new features, in this are which we layout in this section.
 
 \subsection{Tweaks}
 
-Currently the uncompressed RPL header is set with the set by using the Netlink API.
-During runtime the RPL header gets decompressed because the full IPv6 destination address is known.
-In case of that the lwtunnel routing prefix is in a form of a full IPv6 destination address we can do a compression at configuration time.
-This tweak will remove the compression algorithm during runtime in hotpath situation.
-Also to have a full address routing prefix is common thing in the RPL routing protocol.
+Currently the uncompressed RPL header is set by using the Netlink API.
+The RPL header gets decompressed during runtime when the full IPv6 destination address is known.
+This could be optimized for cases where the lwtunnel routing prefix is in a form
+of a full IPv6 destination address. In this scenario we can do a compression at
+configuration time and can save the compression algorithm run during runtime in
+a hotpath. Having a full address routing prefix is a common thing in the RPL routing protocol.
 
 \subsection{IP encapsulation}
 
-As mentioned the creation of IP encapsulation for RPL lwtunnels is not supported yet.
-The only mode is inline. The ROLL IETF working group try to define the cases of when using IP encapsulation \cite{I-D.ietf-roll-useofrplinfo}.
-However it was not necessary to get RPL source routing running in a controlled network.
-In cases of that the internet is in between of two RPL networks IP encapsulation may be required.
+As mentioned before, the creation of IP encapsulation for RPL lwtunnels is not supported yet.
+The only supported mode is inline. The ROLL IETF working group works on defining
+the cases when IP encapsulation \cite{I-D.ietf-roll-useofrplinfo} can or should
+be used.
+However, this is not necessary to get RPL source routing running in a controlled network.
+In cases of several RPL networks are interconnected through the internet IP encapsulation may be required.
 
 \subsection{Mixed Mode}
 
-Michael Richardson pointed out that the ROLL IETF working group is working in a mixed mode of ``storing`` and ``non-storing`` mode.
+Michael Richardson pointed out that the ROLL IETF working group is working on a
+mixed mode of ``storing`` and ``non-storing`` modes.
 As ``non-storing`` mode routes every traffic over the RPL root in can happen that direct downward routes can be shorter.
 This feature doesn't require any change to the Linux RPL kernel functionality, but RPL routing daemons like rpld need to be updated to set routes differently.
 
@@ -418,19 +422,23 @@ This section describes bugs which we detected while implementing and using the s
 
 \subsection{IPv6 Segment Routing}
 
-To implement a lwtunnel we figured out that in ``struct lwtunnel\_state`` has a field named ``headroom`` which was set inside the IPv6 segment routing implementation.
-As we adapted the code base from the IPv6 segment routing implementation as well, we figured out that setting this value with an IPv6 minimum MTU size interface makes problems.
-After doing research and finding out that this field was introduced by the MPLS lightweight tunnel which operates before the IP layer.
+When implementing the lwtunnel we figured out that in ``struct lwtunnel\_state`` a field named ``headroom`` which was set inside the IPv6 segment routing implementation.
+As we adapted the code base from the IPv6 segment routing implementation as
+well, we figured out that setting this value with an IPv6 minimum MTU size
+interface causes problems. Researching this showed that this field was introduced by the MPLS lightweight tunnel which operates before the IP layer.
 As the Linux interface MTU is layer 3, this headroom value specifies the additional amount which is required before IPv6 such as MPLS.
-In out environment on an IPv6 minimum MTU interface the IPv6 segment routing ``sendmsg()`` call will return in an error.
+In out environment, on an IPv6 minimum MTU interface, the IPv6 segment routing ``sendmsg()`` call will return an error.
 There is still a discussion going on what the ``headroom`` value really means. As it breaks 6LoWPAN interface for the RPL lwtunnel implementation it is set to zero.
 
 \subsection{iputils - Traceroute}
 
-Traceroute wasn't working in the first run.
-After debugging Wireshark messages and the iputils traceroute code it came out that this implementation isn't dealing with the next header chain of IPv6 correctly.
-A quick hack was made and a problem description was send to iputils as pull-request \cite{iputilspr}. However Michael Richardson pointed out that handling next headers correctly has it's own RFC \cite{RFC7045}.
-It's still pending to make a clean solution so it's just not working for RPL source routing extension headers.
+When we started to use traceroute to test our implementation it was not working
+correctly. After debugging the comunication with Wireshark it was found that the
+implementation is not dealing with the next header chain of IPv6 correctly.
+A quick fix was prepared and a problem description was send to iputils
+developers as pull-request \cite{iputilspr}. However Michael Richardson pointed out that handling next headers correctly has it's own RFC \cite{RFC7045}.
+Preparing a clean solution for this problem  is still pending as future work.
+Currently it is just not working for RPL source routing extension headers.
 
 \bibliographystyle{isea}
 \bibliography{isea}

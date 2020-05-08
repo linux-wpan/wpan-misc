@@ -139,46 +139,55 @@ For example the root node can reach the child node 6 via node 2 over 5 to 6.
 
 \section{Analysis}
 
-At state of this document current RPL implementations for Linux like rpld or unstrung \cite{unstrung} are supporting storing mode only.
-The reason why nobody implement non-storing mode so far is that there exists unsolved issues.
-This section describes the problem in Linux which need to be solved to provide non-storing mode.
-Afterwards multiple possible solution will be listed.
-At the end a decision is made which will be the approach to provide non-storing mode under Linux.
+When writing this document current RPL implementations for Linux, like rpld or
+unstrung \cite{unstrung}, are supporting storing mode only.
+The main blokcer for implementing non-storing mode in a routing deamon are some
+unsolved issues we will describe in the problem subsection. We describe the
+problem in Linux, which need to be solved to provide non-storing mode.
+Afterwards multiple possible solutions will be evaluated and the decision fo our
+approach explained.
 
 \subsection{Problem}
 
-The Problem is that IPv6 header generation is occurred inside the Linux kernel space.
-As the RPL source routing header is an extension header of IPv6 header it need to be added inside the kernel transmit path of the IPv6 stack.
+The problem user space routing implementations face is IPv6 header generation is
+happening inside in kernel space on Linux.
+As the RPL source routing header is an extension header of IPv6 header, it need to be added inside the kernel transmit path of the IPv6 stack.
 The current state of Linux kernel has no implementation to insert these headers to the IPv6 header.
-Storing mode is not effected to this as it doesn't require the need of source routing.
+Storing mode is not effected by this as it does not use this technique. For
+non-storing mode it has been a blocker for most RPL implementations.
 
-On the receiving part, the IPv6 stack need to parse the RPL source header information and forward it to the nexthop if necessary.
+On the receiving path, the IPv6 stack need to parse the RPL source header information and forward it to the nexthop if necessary.
 
 \subsection{Requirements}
 
-The root node of the RPL DODAG (DODAG root) need to have the possibility to insert a RPL source header with specific configurations per destination address.
-This is necessary when a IPv6 packet from the childs arrived over it's parent path and need to be forwarded to another known child of the RPL network which only the root node knows.
-If a root wants to send a packet to a known child the RPL source route header need to be attached with the right path information to it's child as well.
+The root node of the RPL DODAG (DODAG root) needs to have the possibility to insert a RPL source header with specific configurations per destination address.
+This is necessary when a IPv6 packet from a child arrived over it's parent path
+and needs to be forwarded to another known child of the RPL network which only the root node knows.
+If a root wants to send a packet to a known child the RPL source route header
+needs to be attached with the right path information to it's child as well.
 
-{\bf Each node} need to handle the RPL source routing header by parsing the header and handle forwarding of this packet to the nexthop correctly as RFC6554 describes.
-This need to be done in the Linux IPv6 forwarding plane and not after.
+{\bf Each node} needs to handle the RPL source routing header by parsing the header and handle forwarding of this packet to the nexthop correctly as RFC6554 describes.
+This needs to be done in the Linux IPv6 forwarding plane and not after.
 
 \subsection{Socket Option}
 
 There exists the possibility to add a specific source route header over the socket option ``IPV6\_RTHDR`` in Linux.
 This can be used to place a RPL source routing header per IPv6 on a per socket setup.
-It can be used to send out IPv6 packets with a specific RPL source header without getting the kernel involved of placing a source routing header.
+It can also be used to send out IPv6 packets with a specific RPL source header without getting the kernel involved of placing a source routing header.
 
-The socket option cannot be used to implement to meet both requirements to add a specific source routing header for a specific destination address as it is only used inside the per socket context.
-As well it cannot handle the parsing of IPv6 packets and forwarding them by not reaching the Linux socket layer.
-This option likely made for doing experimental source routing header configuration and send them out.
+The socket option can not be used to implement a solution that meets the
+requirements to add a specific source routing header for a specific destination
+address, as it is only used inside the per socket context.
+It also can not handle the parsing of IPv6 packets and forwarding them by not reaching the Linux socket layer.
 
 \subsection{Lightweight Tunnel}
 
-A lightweight tunnel (lwtunnel) in Linux can be used to meet the requirement of generating RPL source route header for a specific destination.
+A lightweight tunnel (lwtunnel) in Linux can be used to meet the requirement of
+generating RPL source route headers for a specific destination.
 Therefore we can lookup the implementation of IPv6 segment routing \cite{srh} of the Linux kernel implementation.
 Lightweight tunnels can be registered over a ops structure inside the Linux kernel.
-Per route destination, which is in RPL only a full IPv6 address and not a prefix route, a encapsulation type can be given to assign the route to a specific lwtunnel.
+For per route destination, which is in RPL only a full IPv6 address and not a prefix
+route, an encapsulation type can be given to assign the route to a specific lwtunnel.
 Incoming and internal packets for a specific destination lwtunnel will be encapsulated by a RPL source routing header with a specific configuration given by the lwtunnel at creation time.
 
 There is still an open requirement of parsing and forwarding packets which will be discussed in the next section.
@@ -186,7 +195,7 @@ There is still an open requirement of parsing and forwarding packets which will 
 \subsection{Forwarding}
 
 This section describes a solution how to parse and forward a IPv6 packet with a RPL source routing header.
-The following approach is identical how IPv6 segment routing \cite{srh} is solving the same requirement.
+The following approach is identical to how IPv6 segment routing \cite{srh} is solving the same requirement.
 
 In this approach the source routing header handling and forwarding is just placed into the next header handling of the IPv6 stack.
 
@@ -195,13 +204,13 @@ In this approach the source routing header handling and forwarding is just place
 The Linux kernel has eBPF hooks for the lwtunnel implementation.
 This means that the generation of RPL source route header can be implemented as a lwtunnel in eBPF.
 
-There exists no eBPF hooks for the forwarding requirement which also requires to parse the header and interact with the IPv6 forwarding handling.
+On the other hand there exists no eBPF hooks for the forwarding requirement which also requires to parse the header and interact with the IPv6 forwarding handling.
 
 \subsection{Decision}
 
-After thinking about all possible ways how to implement the requirements we doing as Netdevconf 2.1 discussed a similar approach like IPv6 segment routing implementation.
-The socket option doesn't meet the requirements and the eBPF handling requires new hooks and for the lwtunnel additional user space handling to make it work.
-The conclusion is to provide a in kernel lwtunnel implementation and extend the IPv6 extension header parsing with handling for RFC6554 RPL source routing header.
+After evaluating all possible options to implement the requirements we found
+that the socket option doesn't meet the requirements and the eBPF handling requires new hooks and for the lwtunnel additional user space handling to make it work.
+The conclusion is to provide an in kernel lwtunnel implementation and extend the IPv6 extension header parsing with handling for RFC6554 RPL source routing header.
 
 \section{Design}
 

@@ -115,12 +115,9 @@ This section describes an example topology to show the information described in 
 
 \begin{figure}[h]
 	\includegraphics[width=3.31in]{figs/mesh0.eps}
-	\caption{Example Mesh topology with bidirectional edges}
+	\caption{Example mesh topology with bidirectional edges}
 	\label{mesh0}
 \end{figure}
-
-Figure \ref{mesh0} shows a example mesh topology with bidirectional edges so every node can reach each other.
-We will use this example topology to show a resulting RPL topology in ``storing-mode``.
 
 \subsection{RPL DODAG}
 
@@ -130,7 +127,9 @@ We will use this example topology to show a resulting RPL topology in ``storing-
 	\label{mesh1}
 \end{figure}
 
-Figure \ref{mesh1} shows a possible resulting RPL DODAG of the mesh topology as shown in figure \ref{mesh0}.
+In Figure \ref{mesh0} we show an example mesh topology. In this example the
+edges are bidirectional, and every node can reach every other node. Following on
+in figure \ref{mesh1} we show a possible resulting RPL DODAG of the mesh topology from figure \ref{mesh0}.
 Upward routes are shown as red directional arrows to reach the root node which was set by parent selection.
 The root node stores a configuration to setup downward routes shown as green arrows.
 These downward routes will be added as source routing header to the IPv6 header.
